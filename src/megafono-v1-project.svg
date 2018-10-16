@@ -1,14 +1,14 @@
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1750" height="1750">
-    <path fill="#0e2430" d="M0 0h1750v1750H0z"/>
-    <g style="mix-blend-mode:normal" fill="#fff">
+    <path fill="{background}" d="M0 0h1750v1750H0z"/>
+    <g style="mix-blend-mode:normal" fill="{foreground}">
         <use xlink:href="#path2_fill" transform="translate(276.782 494.094) scale(6.68405)" style="mix-blend-mode:normal" width="100%" height="100%"/>
         <use xlink:href="#path3_fill" transform="translate(234.073 227.046) scale(6.68405)" style="mix-blend-mode:normal" width="100%" height="100%"/>
         <use xlink:href="#path4_fill" transform="translate(165.753 489.636) scale(6.68405)" style="mix-blend-mode:normal" width="100%" height="100%"/>
     </g>
-    <text x="142" y="1195" font-weight="700" font-size="259.8" font-family="Open Sans" letter-spacing="0" word-spacing="0" fill="#fff" stroke-width="1.242">
+    <text x="142" y="1195" font-weight="700" font-size="259.8" font-family="Open Sans" letter-spacing="0" word-spacing="0" fill="{foreground}" stroke-width="1.242">
         Megafono
     </text>
-    <text x="154" y="1538.473" font-weight="700" font-size="245" letter-spacing="0" word-spacing="0" font-family="Open Sans" fill="#fff" stroke-width="1.242">
+    <text x="154" y="1538.473" font-weight="700" font-size="245" letter-spacing="0" word-spacing="0" font-family="Open Sans" fill="{foreground}" stroke-width="1.242">
         {project_name}
     </text>
     <defs id="defs28">
