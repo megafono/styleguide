@@ -1,10 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1750" height="1750">
     <path fill="#0e2430" d="M0 0h1750v1750H0z"/>
-    <text style="line-height:51.99999809%" x="867.998" y="661.894" font-weight="400" font-size="49.661" font-family="sans-serif" letter-spacing="0" word-spacing="0" fill="#fff" fill-opacity=".941" stroke-width="1.242" transform="translate(0 730)">
-        <tspan x="867.998" y="661.894" style="line-height:50.99999905%;-inkscape-font-specification:'Open Sans, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center" font-weight="700" font-size="289.688" font-family="Open Sans" text-anchor="middle">Megafono</tspan>
-    </text>
-    <text style="line-height:1.25" x="428.679" y="482.641" font-weight="400" font-size="40" font-family="sans-serif" letter-spacing="0" word-spacing="0" transform="translate(0 730)">
-        <tspan x="428.679" y="482.641">t</tspan>
+    <text x="142" y="1400" font-weight="700" font-size="259.8" font-family="Open Sans" letter-spacing="0" word-spacing="0" fill="#fff" stroke-width="1.242">
+        Megafono
     </text>
     <g style="mix-blend-mode:normal" fill="#fff">
         <use xlink:href="#path2_fill" transform="translate(625.215 568.813) scale(8.12679)" style="mix-blend-mode:normal" width="100%" height="100%"/>
