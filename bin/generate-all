@@ -1,0 +1,89 @@
+#!/bin/bash
+
+set +x
+set +e
+
+declare -a LOGOS
+declare -a SIZES
+
+LOGOS[0]='Changelog'
+LOGOS[1]='Express'
+LOGOS[2]='Site'
+
+SIZES[1]='3000 3000 podcast'
+SIZES[2]='160 160 site'
+SIZES[3]='16 16 favicon-16'
+SIZES[4]='32 32 favicon-32'
+SIZES[5]='48 48 favicon-48'
+SIZES[6]='1200 630 facebook-link-post'
+SIZES[7]='1200 630 facebook-image-post'
+SIZES[8]='820 312 facebook-cover-image'
+SIZES[9]='170 170 facebook-profile-image'
+SIZES[10]='170 170 twitter-image-post'
+SIZES[11]='1500 500 twitter-cover-image'
+SIZES[12]='400 400 twitter-profile-image'
+SIZES[13]='1080 1080 instagram-post-image'
+SIZES[14]='110 110 instagram-profile-image'
+
+function generate {
+  sed "s/{project_name}/$1/" src/megafono-v1-project.svg | sed 's/{background}/#FFF/' | sed "s/{width}/$3/" | sed "s/{height}/$4/" | sed 's/{foreground}/#0e2430/' > generated/megafono-v1-l-$2.svg
+
+  sed "s/{project_name}/$1/" src/megafono-v1-project.svg | sed 's/{background}/#0e2430/' | sed "s/{width}/$3/" | sed "s/{height}/$4/" | sed 's/{foreground}/#FFF/' > generated/megafono-v1-d-$2.svg
+
+  sed "s/{project_name}/$1/" src/megafono-v1-project.svg | sed 's/{background}/transparent/' | sed "s/{width}/$3/" | sed "s/{height}/$4/" | sed 's/{foreground}/#0e2430/' > generated/megafono-v1-lt-$2.svg
+
+  sed "s/{project_name}/$1/" src/megafono-v1-project.svg | sed 's/{background}/transparent/' | sed "s/{width}/$3/" | sed "s/{height}/$4/" | sed 's/{foreground}/#FFF/' > generated/megafono-v1-dt-$2.svg
+
+
+  svgexport generated/megafono-v1-l-$2.svg compiled/megafono-v1-l-${1,,}-$2-$3x$4.png png 100% $3:$4
+  svgexport generated/megafono-v1-d-$2.svg compiled/megafono-v1-d-${1,,}-$2-$3x$4.png png 100% $3:$4
+  svgexport generated/megafono-v1-lt-$2.svg compiled/megafono-v1-lt-${1,,}-$2-$3x$4.png png 100% $3:$4
+  svgexport generated/megafono-v1-dt-$2.svg compiled/megafono-v1-dt-${1,,}-$2-$3x$4.png png 100% $3:$4
+}
+
+rm compiled/* -Rf
+rm generated/* -Rf
+
+for logo in "${LOGOS[@]}"
+do
+  for sizes in "${SIZES[@]}"
+  do
+    arr=(${sizes// / })
+    width=${arr[0]}
+    height=${arr[1]}
+    name=${arr[2]}
+
+    generate ${logo} $name $width $height
+  done
+done
+# 168
+
+sed 's/{background}/#FFF/' src/megafono-v1.svg | sed "s/{width}/3000/" | sed "s/{height}/3000/" | sed 's/{foreground}/#0e2430/' > generated/megafono-v1-l.svg
+sed 's/{background}/#0e2430/' src/megafono-v1.svg | sed "s/{width}/3000/" | sed "s/{height}/3000/" | sed 's/{foreground}/#FFF/' > generated/megafono-v1-d.svg
+sed 's/{background}/transparent/' src/megafono-v1.svg | sed "s/{width}/3000/" | sed "s/{height}/3000/" | sed 's/{foreground}/#0e2430/' > generated/megafono-v1-lt.svg
+sed 's/{background}/transparent/' src/megafono-v1.svg | sed "s/{width}/3000/" | sed "s/{height}/3000/" | sed 's/{foreground}/#FFF/' > generated/megafono-v1-dt.svg
+
+svgexport generated/megafono-v1-l.svg compiled/megafono-v1-l.png png 100% 3000:3000
+svgexport generated/megafono-v1-d.svg compiled/megafono-v1-d.png png 100% 3000:3000
+svgexport generated/megafono-v1-lt.svg compiled/megafono-v1-lt.png png 100% 3000:3000
+svgexport generated/megafono-v1-dt.svg compiled/megafono-v1-dt.png png 100% 3000:3000
+# 172
+
+for sizes in "${SIZES[@]}"
+do
+  arr=(${sizes// / })
+  width=${arr[0]}
+  height=${arr[1]}
+  name=${arr[2]}
+
+  sed 's/{background}/#FFF/' src/megafono-v1.svg | sed "s/{width}/${width}/" | sed "s/{height}/${height}/" | sed 's/{foreground}/#0e2430/' > generated/megafono-v1-l-${width}-${height}.svg
+  sed 's/{background}/#0e2430/' src/megafono-v1.svg | sed "s/{width}/${width}/" | sed "s/{height}/${height}/" | sed 's/{foreground}/#FFF/' > generated/megafono-v1-d-${width}-${height}.svg
+  sed 's/{background}/transparent/' src/megafono-v1.svg | sed "s/{width}/${width}/" | sed "s/{height}/${height}/" | sed 's/{foreground}/#0e2430/' > generated/megafono-v1-lt-${width}-${height}.svg
+  sed 's/{background}/transparent/' src/megafono-v1.svg | sed "s/{width}/${width}/" | sed "s/{height}/${height}/" | sed 's/{foreground}/#FFF/' > generated/megafono-v1-dt-${width}-${height}.svg
+
+  svgexport generated/megafono-v1-l-${width}-${height}.svg compiled/megafono-v1-l-$name-${width}-${height}.png png 100% $width:$height
+  svgexport generated/megafono-v1-d-${width}-${height}.svg compiled/megafono-v1-d-$name-${width}-${height}.png png 100% $width:$height
+  svgexport generated/megafono-v1-dt-${width}-${height}.svg compiled/megafono-v1-dt-$name-${width}-${height}.png png 100% $width:$height
+  svgexport generated/megafono-v1-lt-${width}-${height}.svg compiled/megafono-v1-dt-$name-${width}-${height}.png png 100% $width:$height
+done
+# 228
