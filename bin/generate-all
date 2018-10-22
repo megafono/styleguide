@@ -12,18 +12,12 @@ LOGOS[2]='Site'
 
 SIZES[1]='3000 3000 podcast'
 SIZES[2]='160 160 site'
-SIZES[3]='16 16 favicon-16'
-SIZES[4]='32 32 favicon-32'
 SIZES[5]='48 48 favicon-48'
-SIZES[6]='1200 630 facebook-link-post'
-SIZES[7]='1200 630 facebook-image-post'
+SIZES[6]='1200 630 facebook-link-image-post'
 SIZES[8]='820 312 facebook-cover-image'
 SIZES[9]='170 170 facebook-profile-image'
-SIZES[10]='170 170 twitter-image-post'
-SIZES[11]='1500 500 twitter-cover-image'
 SIZES[12]='400 400 twitter-profile-image'
 SIZES[13]='1080 1080 instagram-post-image'
-SIZES[14]='110 110 instagram-profile-image'
 
 function generate {
   sed "s/{project_name}/$1/" src/megafono-v1-project.svg | sed 's/{background}/#FFF/' | sed "s/{width}/$3/" | sed "s/{height}/$4/" | sed 's/{foreground}/#0e2430/' > generated/megafono-v1-l-$2.svg
@@ -41,6 +35,8 @@ function generate {
   svgexport generated/megafono-v1-dt-$2.svg compiled/megafono-v1-dt-${1,,}-$2-$3x$4.png png 100% $3:$4
 }
 
+mkdir -p compiled
+mkdir -p generated
 rm compiled/* -Rf
 rm generated/* -Rf
 
