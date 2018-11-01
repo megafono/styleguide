@@ -1,85 +1,91 @@
 #!/bin/bash
 
-set +x
-set +e
+set -e
+set -x
 
 declare -a LOGOS
 declare -a SIZES
+declare -a VARIANTS
 
-LOGOS[0]='Changelog'
-LOGOS[1]='Express'
-LOGOS[2]='Site'
+rm zips/* -Rf
 
-SIZES[1]='3000 3000 podcast'
-SIZES[2]='160 160 site'
-SIZES[5]='48 48 favicon-48'
-SIZES[6]='1200 630 facebook-link-image-post'
-SIZES[8]='820 312 facebook-cover-image'
-SIZES[9]='170 170 facebook-profile-image'
-SIZES[12]='400 400 twitter-profile-image'
-SIZES[13]='1080 1080 instagram-post-image'
+LOGOS[0]=''
+LOGOS[1]='Changelog'
+LOGOS[2]='Express'
+LOGOS[3]='Site'
+
+SIZES[0]='3000 3000'
+
+VARIANTS[0]='White'
+VARIANTS[1]='Dark'
+VARIANTS[2]='White_Transparent'
+VARIANTS[3]='Dark_Transparent'
+
+declare -A VARIANT_COLOR_BACKGROUND_MAP
+VARIANT_COLOR_BACKGROUND_MAP['White']='#0e2430'
+VARIANT_COLOR_BACKGROUND_MAP['Dark']='#fff'
+VARIANT_COLOR_BACKGROUND_MAP['White_Transparent']='transparent'
+VARIANT_COLOR_BACKGROUND_MAP['Dark_Transparent']='transparent'
+
+declare -A VARIANT_COLOR_FOREGROUND_MAP
+VARIANT_COLOR_FOREGROUND_MAP['White']='#fff'
+VARIANT_COLOR_FOREGROUND_MAP['Dark']='#0e2430'
+VARIANT_COLOR_FOREGROUND_MAP['White_Transparent']='#fff'
+VARIANT_COLOR_FOREGROUND_MAP['Dark_Transparent']='#0e2430'
 
 function generate {
-  sed "s/{project_name}/$1/" src/megafono-v1-project.svg | sed 's/{background}/#FFF/' | sed "s/{width}/$3/" | sed "s/{height}/$4/" | sed 's/{foreground}/#0e2430/' > generated/megafono-v1-l-$2.svg
+    # $1 logo
+    # $2 witdh
+    # $3 height
+    # $4 background
+    # $5 foreground
+    # $6 variant
+    sed "s/{project_name}/$1/" src/megafono-v1-project.svg | sed "s/{background}/$4/" | sed "s/{width}/$2/" | sed "s/{height}/$3/" | sed "s/{foreground}/$5/" > compiled/Megafono$1/Megafono$1_$6.svg
 
-  sed "s/{project_name}/$1/" src/megafono-v1-project.svg | sed 's/{background}/#0e2430/' | sed "s/{width}/$3/" | sed "s/{height}/$4/" | sed 's/{foreground}/#FFF/' > generated/megafono-v1-d-$2.svg
-
-  sed "s/{project_name}/$1/" src/megafono-v1-project.svg | sed 's/{background}/transparent/' | sed "s/{width}/$3/" | sed "s/{height}/$4/" | sed 's/{foreground}/#0e2430/' > generated/megafono-v1-lt-$2.svg
-
-  sed "s/{project_name}/$1/" src/megafono-v1-project.svg | sed 's/{background}/transparent/' | sed "s/{width}/$3/" | sed "s/{height}/$4/" | sed 's/{foreground}/#FFF/' > generated/megafono-v1-dt-$2.svg
-
-
-  svgexport generated/megafono-v1-l-$2.svg compiled/megafono-v1-l-${1,,}-$2-$3x$4.png png 100% $3:$4
-  svgexport generated/megafono-v1-d-$2.svg compiled/megafono-v1-d-${1,,}-$2-$3x$4.png png 100% $3:$4
-  svgexport generated/megafono-v1-lt-$2.svg compiled/megafono-v1-lt-${1,,}-$2-$3x$4.png png 100% $3:$4
-  svgexport generated/megafono-v1-dt-$2.svg compiled/megafono-v1-dt-${1,,}-$2-$3x$4.png png 100% $3:$4
+    svgexport compiled/Megafono$1/Megafono$1_$6.svg compiled/Megafono$1/Megafono$1_$6_$2x$3.png png 100% $2:$3
+    pngquant -f --ext .png compiled/Megafono$1/Megafono$1_$6_$2x$3.png
 }
 
-mkdir -p compiled
-mkdir -p generated
-rm compiled/* -Rf
-rm generated/* -Rf
+function generate-logo {
+    # $1 witdh
+    # $2 height
+    # $3 background
+    # $4 foreground
+    # $5 variant
+    # $6 horizontal?
+    sed "s/{background}/$3/" src/megafono-v1$6.svg | sed "s/{width}/$1/" | sed "s/{height}/$2/" | sed "s/{foreground}/$4/" > compiled/Megafono$6/Megafono_$5.svg
 
-for logo in "${LOGOS[@]}"
+    svgexport compiled/Megafono$6/Megafono_$5.svg compiled/Megafono$6/Megafono_$5_$1x$2.png png 100% $1:$2
+    pngquant -f --ext .png compiled/Megafono$6/Megafono_$5_$1x$2.png
+}
+
+
+for name in "${LOGOS[@]}"
 do
-  for sizes in "${SIZES[@]}"
-  do
-    arr=(${sizes// / })
-    width=${arr[0]}
-    height=${arr[1]}
-    name=${arr[2]}
+    for sizes in "${SIZES[@]}"
+    do
+        for variant in "${VARIANTS[@]}"
+        do
+            arr=(${sizes// / })
+            width=${arr[0]}
+            height=${arr[1]}
+            background=${VARIANT_COLOR_BACKGROUND_MAP[$variant]}
+            foreground=${VARIANT_COLOR_FOREGROUND_MAP[$variant]}
 
-    generate ${logo} $name $width $height
-  done
+            if [ "$name" = "" ]; then
+                mkdir -p compiled/Megafono
+                generate-logo $width $height $background $foreground $variant ""
+
+                    mkdir -p compiled/Megafonohorizontal
+                generate-logo $width $(((500*width)/2150)) $background $foreground $variant "horizontal"
+            else
+                mkdir -p compiled/Megafono$name
+                generate ${name} $width $height $background $foreground $variant
+            fi
+        done
+    done
+
+    (cd compiled/Megafono$name && zip -r ../../zips/Megafono$name.zip .)
 done
-# 168
 
-sed 's/{background}/#FFF/' src/megafono-v1.svg | sed "s/{width}/3000/" | sed "s/{height}/3000/" | sed 's/{foreground}/#0e2430/' > generated/megafono-v1-l.svg
-sed 's/{background}/#0e2430/' src/megafono-v1.svg | sed "s/{width}/3000/" | sed "s/{height}/3000/" | sed 's/{foreground}/#FFF/' > generated/megafono-v1-d.svg
-sed 's/{background}/transparent/' src/megafono-v1.svg | sed "s/{width}/3000/" | sed "s/{height}/3000/" | sed 's/{foreground}/#0e2430/' > generated/megafono-v1-lt.svg
-sed 's/{background}/transparent/' src/megafono-v1.svg | sed "s/{width}/3000/" | sed "s/{height}/3000/" | sed 's/{foreground}/#FFF/' > generated/megafono-v1-dt.svg
-
-svgexport generated/megafono-v1-l.svg compiled/megafono-v1-l.png png 100% 3000:3000
-svgexport generated/megafono-v1-d.svg compiled/megafono-v1-d.png png 100% 3000:3000
-svgexport generated/megafono-v1-lt.svg compiled/megafono-v1-lt.png png 100% 3000:3000
-svgexport generated/megafono-v1-dt.svg compiled/megafono-v1-dt.png png 100% 3000:3000
-# 172
-
-for sizes in "${SIZES[@]}"
-do
-  arr=(${sizes// / })
-  width=${arr[0]}
-  height=${arr[1]}
-  name=${arr[2]}
-
-  sed 's/{background}/#FFF/' src/megafono-v1.svg | sed "s/{width}/${width}/" | sed "s/{height}/${height}/" | sed 's/{foreground}/#0e2430/' > generated/megafono-v1-l-${width}-${height}.svg
-  sed 's/{background}/#0e2430/' src/megafono-v1.svg | sed "s/{width}/${width}/" | sed "s/{height}/${height}/" | sed 's/{foreground}/#FFF/' > generated/megafono-v1-d-${width}-${height}.svg
-  sed 's/{background}/transparent/' src/megafono-v1.svg | sed "s/{width}/${width}/" | sed "s/{height}/${height}/" | sed 's/{foreground}/#0e2430/' > generated/megafono-v1-lt-${width}-${height}.svg
-  sed 's/{background}/transparent/' src/megafono-v1.svg | sed "s/{width}/${width}/" | sed "s/{height}/${height}/" | sed 's/{foreground}/#FFF/' > generated/megafono-v1-dt-${width}-${height}.svg
-
-  svgexport generated/megafono-v1-l-${width}-${height}.svg compiled/megafono-v1-l-$name-${width}-${height}.png png 100% $width:$height
-  svgexport generated/megafono-v1-d-${width}-${height}.svg compiled/megafono-v1-d-$name-${width}-${height}.png png 100% $width:$height
-  svgexport generated/megafono-v1-dt-${width}-${height}.svg compiled/megafono-v1-dt-$name-${width}-${height}.png png 100% $width:$height
-  svgexport generated/megafono-v1-lt-${width}-${height}.svg compiled/megafono-v1-dt-$name-${width}-${height}.png png 100% $width:$height
-done
-# 228
+# rm compiled -Rf
