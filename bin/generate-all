@@ -8,6 +8,7 @@ declare -a SIZES
 declare -a VARIANTS
 
 rm zips/* -Rf
+rm compiled/* -Rf
 
 LOGOS[0]=''
 LOGOS[1]='Changelog'
@@ -42,8 +43,13 @@ function generate {
     # $6 variant
     sed "s/{project_name}/$1/" src/megafono-v1-project.svg | sed "s/{background}/$4/" | sed "s/{width}/$2/" | sed "s/{height}/$3/" | sed "s/{foreground}/$5/" > compiled/Megafono$1/Megafono$1_$6.svg
 
-    svgexport compiled/Megafono$1/Megafono$1_$6.svg compiled/Megafono$1/Megafono$1_$6_$2x$3.png png 100% $2:$3
+    svg-embed-font compiled/Megafono$1/Megafono$1_$6.svg fonts/*
+    rm compiled/Megafono$1/Megafono$1_$6.svg
+
+    svgexport compiled/Megafono$1/Megafono$1_$6.embed.svg compiled/Megafono$1/Megafono$1_$6_$2x$3.png png 100% $2:$3
     pngquant -f --ext .png compiled/Megafono$1/Megafono$1_$6_$2x$3.png
+
+    mv compiled/Megafono$1/Megafono$1_$6.embed.svg compiled/Megafono$1/Megafono$1_$6.svg
 }
 
 function generate-logo {
@@ -55,8 +61,14 @@ function generate-logo {
     # $6 horizontal?
     sed "s/{background}/$3/" src/megafono-v1$6.svg | sed "s/{width}/$1/" | sed "s/{height}/$2/" | sed "s/{foreground}/$4/" > compiled/Megafono$6/Megafono_$5.svg
 
-    svgexport compiled/Megafono$6/Megafono_$5.svg compiled/Megafono$6/Megafono_$5_$1x$2.png png 100% $1:$2
+
+    svg-embed-font compiled/Megafono$6/Megafono_$5.svg fonts/*
+    rm compiled/Megafono$6/Megafono_$5.svg
+
+    svgexport compiled/Megafono$6/Megafono_$5.embed.svg compiled/Megafono$6/Megafono_$5_$1x$2.png png 100% $1:$2
     pngquant -f --ext .png compiled/Megafono$6/Megafono_$5_$1x$2.png
+
+    mv compiled/Megafono$6/Megafono_$5.embed.svg compiled/Megafono$6/Megafono_$5.svg
 }
 
 
@@ -76,8 +88,9 @@ do
                 mkdir -p compiled/Megafono
                 generate-logo $width $height $background $foreground $variant ""
 
-                    mkdir -p compiled/Megafonohorizontal
-                generate-logo $width $(((500*width)/2150)) $background $foreground $variant "horizontal"
+                mkdir -p compiled/Megafono-horizontal
+
+                generate-logo $width $(((1250*width)/6500)) $background $foreground $variant "-horizontal"
             else
                 mkdir -p compiled/Megafono$name
                 generate ${name} $width $height $background $foreground $variant
@@ -87,5 +100,3 @@ do
 
     (cd compiled/Megafono$name && zip -r ../../zips/Megafono$name.zip .)
 done
-
-# rm compiled -Rf
