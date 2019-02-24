@@ -10,4 +10,4 @@ RUN mkdir -p /tmp/svg-embed-font && wget -qO- https://github.com/BTBurke/svg-emb
 COPY . /usr/src/app
 WORKDIR /usr/src/app
 
-ENTRYPOINT ["bin/generate-all"]
+CMD ["bin/all"]

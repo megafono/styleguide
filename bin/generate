@@ -1,0 +1,59 @@
+#!/bin/bash
+
+set -e
+set -x
+
+declare -a VARIANTS
+
+VARIANTS[0]='White'
+VARIANTS[1]='Dark'
+VARIANTS[2]='White_Transparent'
+VARIANTS[3]='Dark_Transparent'
+
+declare -A VARIANT_COLOR_BACKGROUND_MAP
+VARIANT_COLOR_BACKGROUND_MAP['White']='#0e2430'
+VARIANT_COLOR_BACKGROUND_MAP['Dark']='#fff'
+VARIANT_COLOR_BACKGROUND_MAP['White_Transparent']='transparent'
+VARIANT_COLOR_BACKGROUND_MAP['Dark_Transparent']='transparent'
+
+declare -A VARIANT_COLOR_FOREGROUND_MAP
+VARIANT_COLOR_FOREGROUND_MAP['White']='#fff'
+VARIANT_COLOR_FOREGROUND_MAP['Dark']='#0e2430'
+VARIANT_COLOR_FOREGROUND_MAP['White_Transparent']='#fff'
+VARIANT_COLOR_FOREGROUND_MAP['Dark_Transparent']='#0e2430'
+
+src=$1
+width=$2
+height=$3
+project_name=$4
+
+for variant in "${VARIANTS[@]}"
+do
+    width=${width:-no}
+    height=${height:-no}
+    arr=(${sizes// / })
+
+    if [[ "$width" == no ]]; then
+        width=${arr[0]}
+    fi
+
+    if [[ "$height" == no ]]; then
+        height=${arr[1]}
+    fi
+
+    mkdir -p compiled/$src
+
+    background=${VARIANT_COLOR_BACKGROUND_MAP[$variant]}
+    foreground=${VARIANT_COLOR_FOREGROUND_MAP[$variant]}
+
+    sed "s/{project_name}/$project_name/" src/$src.svg | sed "s/{background}/$background/" | sed "s/{width}/$width/" | sed "s/{height}/$height/" | sed "s/{foreground}/$foreground/" > compiled/$src/$src-$variant.svg
+
+    svg-embed-font compiled/$src/$src-$variant.svg fonts/*
+    rm compiled/$src/$src-$variant.svg
+
+    svgexport compiled/$src/$src-$variant.embed.svg compiled/$src/$src-$variant-$width-$height.png png 100% $width:$height
+    pngquant -f --ext .png compiled/$src/$src-$variant-$width-$height.png
+
+    mv compiled/$src/$src-$variant.embed.svg compiled/$src/$src-$variant.svg
+    echo "Variant $variant to $src generated"
+done
