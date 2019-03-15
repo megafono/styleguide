@@ -57,3 +57,5 @@ do
     mv compiled/$src/$src-$variant.embed.svg compiled/$src/$src-$variant.svg
     echo "Variant $variant to $src generated"
 done
+
+(cd compiled/$src && zip -r ../../zips/$src.zip .)
