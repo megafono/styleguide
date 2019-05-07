@@ -1,12 +1,5 @@
 #!/bin/bash
 
-bin/generate comunidade-v1-horizontal 3000 576
-bin/generate comunidade-v1-horizontal 625 120
-
-bin/generate comunidade-v1 3000 3000
-bin/generate comunidade-v1 120 120
-bin/generate comunidade-v1 512 512
-
 bin/generate megafono-v1-solo 3000 3000
 bin/generate megafono-v1-solo 120 120
 bin/generate megafono-v1-solo 512 512
